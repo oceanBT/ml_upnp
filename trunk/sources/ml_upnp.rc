@@ -1,0 +1,240 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Français (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_TREEITEMMENU MENU 
+BEGIN
+    POPUP "UpnpGeneralTreeItemContext"
+    BEGIN
+        MENUITEM "About",                       ID_UPNPGENERALTREEITEMCONTEXT_AIDE
+    END
+    POPUP "UpnpItemContext"
+    BEGIN
+        MENUITEM "Play",                        ID_UPNPITEMCONTEXT_PLAY
+        MENUITEM "Enqueue",                     ID_UPNPITEMCONTEXT_ENQUEUE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_UPNP_ROOT DIALOGEX 0, 0, 309, 332
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    CTEXT           "\n\n\nThis is the list of the Network devices currently connected to your system.\n\n\nIf you don't see your device listed, please check with either the manufacturer or Winamp.com for a plug-in.",IDC_STATIC_ROOT,0,0,309,331,SS_NOPREFIX,WS_EX_TRANSPARENT
+END
+
+IDD_UPNP_CONFIG_SUPPORT DIALOGEX 0, 0, 271, 246
+STYLE DS_SYSMODAL | DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Options de support",IDC_STATIC,5,4,253,35,NOT WS_VISIBLE
+    PUSHBUTTON      "Visiter le forum...",IDC_VISITFORUM,33,15,84,14,NOT WS_VISIBLE | WS_DISABLED
+    PUSHBUTTON      "Soumettre un rapport de bug...",IDC_SUBMITBUGREPORT,135,15,106,14,NOT WS_VISIBLE | WS_DISABLED
+    GROUPBOX        "A propos",IDC_STATIC,5,42,253,145
+    LTEXT           "Ce plugin a été développé et est actuellement maintenu par moi même. Il est fournit totalement gratuit et réalisé pendant mon temps libre.",IDC_STATIC,14,59,235,26
+    LTEXT           "Ce plugin utilise la librairie PLATINUM SDK pour le protocole UPnP.",IDC_STATIC,14,84,235,24
+    LTEXT           "Si vous avez trouvé ce plugin utile et que vous désirez le voir évoluer ou tout simplement vous rencontrez une anomalie, vous pouvez toujours m'envoyer un mail à l'adresse suivante : c.lallier@gmail.com",IDC_STATIC,14,110,235,32
+    LTEXT           "Merci à vous,\n    Cédric",IDC_STATIC,14,145,235,17
+END
+
+IDD_UPNP_CONFIG_ABOUT DIALOGEX 0, 0, 271, 246
+STYLE DS_SYSMODAL | DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Quoi de neuf",IDC_STATIC,5,4,253,121
+    EDITTEXT        IDC_CHANGELOG,14,27,235,91,ES_MULTILINE | ES_READONLY | NOT WS_VISIBLE | WS_DISABLED | WS_VSCROLL | WS_HSCROLL
+    GROUPBOX        "A propos",IDC_STATIC,5,126,253,72
+    LTEXT           "Développé par Cédric Lallier.",IDC_STATIC,14,136,235,24
+    LTEXT           "Ce plugin est développé pour Winamp 5.0 et ultérieur et est fourni 'tel quel', sans aucune garantie.\nMerci aux contributeurs: C0diq pour la librairie PLATINUM SDK, MrSinatra pour ses souhaits, DrO pour ses conseils.",IDC_STATIC,14,161,235,32
+    CONTROL         "Vérifier automatiquement les mises à jour de ce plugin",IDC_UPDATECHK,
+                    "Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,14,16,235,10
+END
+
+IDD_UPNP_CONFIG_MEDIA_RENDERER DIALOGEX 0, 0, 271, 246
+STYLE DS_SYSMODAL | DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Activer le Renderer",IDC_UPDATECHK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,16,235,10
+    GROUPBOX        "Activer ou désactiver",IDC_STATIC,5,4,253,29,WS_GROUP
+    GROUPBOX        "Options",IDC_STATIC,5,35,253,169,WS_DISABLED | WS_GROUP
+    RTEXT           "Nom :",IDC_STATIC,8,48,49,8
+    EDITTEXT        IDC_FRIENDLYNAME,60,47,175,12,ES_AUTOHSCROLL
+    CONTROL         "Autoriser la visibilité de l'adresse IP",IDC_IP_VISIBLE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,118,65,127,8
+    RTEXT           "Port :",IDC_STATIC,8,66,49,8
+    EDITTEXT        IDC_PORT,60,64,43,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_COMMANDS,"SysListView32",LVS_LIST | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,59,82,104,116
+    RTEXT           "Commandes :",IDC_STATIC,6,84,49,8
+END
+
+IDD_UPNP_CONFIG_MEDIA_SERVER DIALOGEX 0, 0, 271, 246
+STYLE DS_SYSMODAL | DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CTEXT           "En cours de développement.",IDC_STATIC,0,0,271,246,WS_BORDER
+END
+
+IDD_UPNP_UPDATES DIALOGEX 0, 0, 211, 70
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Mise à jour disponible"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "Aller sur le site de téléchargement !",IDC_UPDATENOW,3,55,141,14
+    PUSHBUTTON      "Annuler",IDC_CANCEL,153,55,50,14
+    LTEXT           "Une nouvelle version du plugin est disponible ! Il est vivement recommandé de le mettre à jour.",IDC_STATIC,5,7,200,27
+    CONTROL         "Ne plus m'informer des nouvelles mises à jour",IDC_NONOTIFY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,37,157,9
+END
+
+IDD_UPNP_SCAN_DEVICE_TMP DIALOGEX 0, 0, 146, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST
+CAPTION "Ajout de media..."
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CTEXT           "Début du scan...",IDC_SCAN_CURRENT_FILE,0,8,146,14
+    DEFPUSHBUTTON   "Abandonner",ID_SCAN_CANCEL,45,26,56,14
+END
+
+IDD_UPNP_ROOT1 DIALOGEX 0, 0, 309, 279
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    LTEXT           "",IDC_STATIC_STATUS,121,267,168,8
+    CONTROL         "",IDC_LISTVIEW,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | WS_TABSTOP,0,0,309,263
+    CONTROL         "Play",IDC_BUTTON_PLAY,"Button",BS_OWNERDRAW | WS_TABSTOP,1,265,35,11
+    CONTROL         "Enqueue",IDC_BUTTON_ENQUEUE,"Button",BS_OWNERDRAW | WS_TABSTOP,39,265,41,11
+    LTEXT           "Search:",IDC_STATIC_SEARCH,0,2,26,8,NOT WS_VISIBLE
+    EDITTEXT        IDC_TEXT_QUICKSEARCH,26,2,283,10,NOT WS_VISIBLE | NOT WS_BORDER | WS_GROUP
+END
+
+IDD_UPNP_SCAN_DEVICE_DIALOG DIALOGEX 0, 0, 190, 94
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Media to library"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Scan device",ID_SCAN_DEVICE,49,36,83,14,BS_CENTER | BS_VCENTER
+    PUSHBUTTON      "Close",ID_CLOSE,132,74,50,14,BS_CENTER | BS_VCENTER
+    LTEXT           "You have no items in your media library. To add items, click the Scan device button bellow.",IDC_STATIC,7,7,175,20
+    CTEXT           "",IDC_STATIC_ITEM,7,60,175,9,SS_PATHELLIPSIS
+    CONTROL         "Do not show me this again",IDC_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,77,116,11
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_UPNP_ROOT, DIALOG
+    BEGIN
+        VERTGUIDE, 84
+        BOTTOMMARGIN, 331
+    END
+
+    IDD_UPNP_UPDATES, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 69
+    END
+
+    IDD_UPNP_SCAN_DEVICE_TMP, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 40
+    END
+
+    IDD_UPNP_ROOT1, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 278
+    END
+
+    IDD_UPNP_SCAN_DEVICE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "platinum.bmp"
+IDB_BITMAP2             BITMAP                  "upnp.bmp"
+#endif    // Français (France) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
