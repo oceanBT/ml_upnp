@@ -65,20 +65,19 @@ CWinamp_BrowseTask::CWinamp_BrowseTask (HWND                        hwnd,
 +---------------------------------------------------------------------*/
 CWinamp_BrowseTask::~CWinamp_BrowseTask(void)
 {
-  NPT_Int8 buf[256];
+  TCHAR buf[256] = {0};
 
   NPT_LOG_FINEST("CWinamp_BrowseTask::~CWinamp_BrowseTask");
 
   if (m_NodeId != -1)
   {
-    MLTREEITEMINFO TreeInfo;
+    MLTREEITEMINFOW TreeInfo;
     TreeInfo.handle = (UINT_PTR) SendMessage(m_PluginUPNP->hwndLibraryParent, WM_ML_IPC, (WPARAM)m_NodeId, ML_IPC_TREEITEM_GETHANDLE);
     TreeInfo.mask = MLTI_TEXT;
     TreeInfo.item.size = sizeof(MLTREEITEM);
     TreeInfo.item.id = m_NodeId;
 
-    memset(buf, 0, sizeof(buf));
-    NPT_FormatString(buf, sizeof(buf), "%s\0", m_Device->GetFriendlyName().GetChars());
+    StringCchPrintfW(buf, sizeof(buf), L"%s", CA2T(m_Device->GetFriendlyName().GetChars()));
     TreeInfo.item.title = buf;
     TreeInfo.item.titleLen = sizeof(buf) - 1;
     SendMessage(m_PluginUPNP->hwndLibraryParent, WM_ML_IPC, (WPARAM)&TreeInfo, ML_IPC_TREEITEM_SETINFO);
@@ -86,8 +85,7 @@ CWinamp_BrowseTask::~CWinamp_BrowseTask(void)
 
   if (m_Hwnd)
   {
-    NPT_SetMemory(buf, 0, sizeof(buf));
-    NPT_CopyString(buf, "Fin du scan.");
+    StringCchPrintfW(buf, sizeof(buf), L"Fin du scan.");
     SetDlgItemText(m_Hwnd, IDC_STATIC_ITEM, buf);
   }
 
@@ -108,7 +106,7 @@ CWinamp_BrowseTask::~CWinamp_BrowseTask(void)
 void
 CWinamp_BrowseTask::DoRun(void)
 {
-  NPT_Int8 buf[256];
+  TCHAR buf[256];
 
   NPT_LOG_FINEST("CWinamp_BrowseTask::DoRun");
   NPT_CHECK_POINTER_LABEL_FATAL(m_DB, done);
@@ -118,13 +116,12 @@ CWinamp_BrowseTask::DoRun(void)
   
   if (m_NodeId != -1)
   {
-    MLTREEITEMINFO TreeInfo;
+    MLTREEITEMINFOW TreeInfo;
     TreeInfo.handle = (UINT_PTR) SendMessage(m_PluginUPNP->hwndLibraryParent, WM_ML_IPC, (WPARAM)m_NodeId, ML_IPC_TREEITEM_GETHANDLE);
     TreeInfo.mask = MLTI_TEXT;
     TreeInfo.item.size = sizeof(MLTREEITEM);
     TreeInfo.item.id = m_NodeId;
-    memset(buf, 0, sizeof(buf));
-    NPT_FormatString(buf, sizeof(buf), "%s (scan en cours...)\0", m_Device->GetFriendlyName().GetChars());
+    StringCchPrintfW(buf, sizeof(buf), L"%s (scan en cours...)", CA2T(m_Device->GetFriendlyName().GetChars()));
     TreeInfo.item.title = buf;
     TreeInfo.item.titleLen = sizeof(buf) - 1;
     SendMessage(m_PluginUPNP->hwndLibraryParent, WM_ML_IPC, (WPARAM)&TreeInfo, ML_IPC_TREEITEM_SETINFO);
@@ -132,9 +129,8 @@ CWinamp_BrowseTask::DoRun(void)
 
   if (m_Hwnd)
   {
-    NPT_SetMemory(buf, 0, sizeof(buf));
-    NPT_CopyString(buf, "Scan en cours...");
-    SetDlgItemText(m_Hwnd, IDC_STATIC_ITEM, buf);
+    StringCchPrintfW(buf, sizeof(buf), L"Scan en cours...");
+    SetDlgItemTextW(m_Hwnd, IDC_STATIC_ITEM, buf);
   }
 
   m_Abort = 0;
@@ -153,7 +149,7 @@ CWinamp_BrowseTask::RecursiveBrowse(NPT_String object_id)
 {
   PLT_MediaObjectListReference        BrowseResults;
   NPT_Cardinal                        i = 0;
-  NPT_Int8 buf[256];
+  TCHAR buf[256];
 
   if (!IsAborting(0)) 
   {
@@ -170,8 +166,7 @@ CWinamp_BrowseTask::RecursiveBrowse(NPT_String object_id)
         {
           if (m_Hwnd)
           {
-            NPT_SetMemory(buf, 0, sizeof(buf));
-            NPT_FormatString(buf, sizeof(buf), "Scan du répertoire %s", (*item)->m_Title.GetChars());
+            StringCchPrintfW(buf, sizeof(buf), L"Scan du répertoire %s", CA2T((*item)->m_Title.GetChars()));
             SetDlgItemText(m_Hwnd, IDC_STATIC_ITEM, buf);
           }
           RecursiveBrowse((*item)->m_ObjectID);
@@ -191,8 +186,7 @@ CWinamp_BrowseTask::RecursiveBrowse(NPT_String object_id)
                   {
                     if (m_Hwnd)
                     {
-                      NPT_SetMemory(buf, 0, sizeof(buf));
-                      NPT_FormatString(buf, sizeof(buf), "Ajout du média %s", (*item)->m_Title.GetChars());
+                      StringCchPrintfW(buf, sizeof(buf), L"Ajout du média %s", CA2T((*item)->m_Title.GetChars()));
                       SetDlgItemText(m_Hwnd, IDC_STATIC_ITEM, buf);
                     }
 
@@ -202,13 +196,12 @@ CWinamp_BrowseTask::RecursiveBrowse(NPT_String object_id)
                     if (m_NodeId != -1)
                     {
                       //Partie Winamp
-                      MLTREEITEMINFO TreeInfo;
+                      MLTREEITEMINFOW TreeInfo;
                       TreeInfo.handle = (UINT_PTR) SendMessage(m_PluginUPNP->hwndLibraryParent, WM_ML_IPC, (WPARAM)m_NodeId, ML_IPC_TREEITEM_GETHANDLE);
                       TreeInfo.mask = MLTI_TEXT;
                       TreeInfo.item.size = sizeof(MLTREEITEM);
                       TreeInfo.item.id = m_NodeId;
-                      NPT_SetMemory(buf, 0, sizeof(buf));
-                      NPT_FormatString(buf, sizeof(buf), "%s (%ld)\0", m_Device->GetFriendlyName().GetChars(), m_NbItem);
+                      StringCchPrintfW(buf, sizeof(buf), L"%s (%ld)", CA2T(m_Device->GetFriendlyName().GetChars()), m_NbItem);
                       TreeInfo.item.title = buf;
                       TreeInfo.item.titleLen = sizeof(buf) - 1;
                       SendMessage(m_PluginUPNP->hwndLibraryParent, WM_ML_IPC, (WPARAM)&TreeInfo, ML_IPC_TREEITEM_SETINFO);

@@ -154,7 +154,7 @@ CWinamp_BrowseTask      *g_Task;
 
 LRESULT CALLBACK ScanDeviceDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  char buf[256];
+  TCHAR buf[256];
 
   NPT_LOG_FINEST("ScanDeviceDlgProc");
 
@@ -175,8 +175,7 @@ LRESULT CALLBACK ScanDeviceDlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
             g_Task = new CWinamp_BrowseTask(hwnd, 1, g_MediaController);
             g_MediaController->GetTaskManager()->StartTask(g_Task);
 
-            NPT_SetMemory(buf, 0, sizeof(buf));
-            NPT_CopyString(buf, "Cancel");
+            StringCchPrintfW(buf, sizeof(buf), L"Cancel");
             SetDlgItemText(hwnd, ID_SCAN_DEVICE, buf);
             g_Cancel = 1;
             EnableWindow(GetDlgItem(hwnd,IDC_CHECK), FALSE);

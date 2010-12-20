@@ -59,23 +59,28 @@ using namespace std;
 #define PROC FARPROC
 #endif
 
-#define PLUGIN_NAME         "UPnP A/V ControlPoint for Winamp"
-#define PLUGIN_VERSION      "v0.7.1"
-#define PLUGIN_AUTHOR       "Cédric Lallier"
-#define PLUGIN_AUTHOR_MAIL  "c.lallier@gmail.com"
-#define PLUGIN_ABOUT        PLUGIN_NAME " " PLUGIN_VERSION " by " PLUGIN_AUTHOR " (" PLUGIN_AUTHOR_MAIL ")"
+#define PLUGIN_NAME         L"UPnP A/V ControlPoint for Winamp"
+#define PLUGIN_VERSION      L"v0.7.1"
+#define PLUGIN_AUTHOR       L"Cédric Lallier"
+#define PLUGIN_AUTHOR_MAIL  L"c.lallier@gmail.com"
+#define PLUGIN_ABOUT        PLUGIN_NAME L" " PLUGIN_VERSION L" by " PLUGIN_AUTHOR L" (" PLUGIN_AUTHOR_MAIL L")"
+#define PLUGIN_DESCRIPTION  PLUGIN_NAME L" " PLUGIN_VERSION
 
-#define WINAMP_ROOT_ITEM                "Network Devices"
-#define WINAMP_NO_DEVICE_FOUND          "No device found"
-#define WINAMP_NO_RENDER_DEVICE_FOUND   "(- No MediaRender Device Found -)"
+#define WINAMP_ROOT_ITEM                L"Network Devices"
+#define WINAMP_NO_DEVICE_FOUND          L"No device found"
+#define WINAMP_NO_RENDER_DEVICE_FOUND   L"(- No MediaRender Device Found -)"
 
 // configuration section in winamp.ini
-#define CONFIG_SECTION      "ml_upnp"
-#define CONFIG_SPLASH       "upnp_Splash"
-#define CONFIG_RENDERER     "upnp_Renderer"
-#define CONFIG_FRIENDLYNAME "upnp_FriendlyName"
-#define CONFIG_MLFILE       "upnp_ini"
-#define DEFAUT_FRIENDLYNAME "Winamp Media Renderer"
+#define CONFIG_SECTION      L"ml_upnp"
+#define CONFIG_SPLASH       L"upnp_Splash"
+#define CONFIG_RENDERER     L"upnp_Renderer"
+#define CONFIG_FRIENDLYNAME L"upnp_FriendlyName"
+#define CONFIG_MLFILE       L"upnp_ini"
+#define DEFAUT_FRIENDLYNAME L"Winamp Media Renderer"
+
+// Define
+#define TIMERID_QUICKSEARCH     500
+#define TIMERID_FIRSTUSE        600
 
 // TODO : faites référence ici aux en-têtes supplémentaires nécessaires au programme
 #include "gen_ml/ml.h"
