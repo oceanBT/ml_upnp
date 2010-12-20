@@ -44,7 +44,6 @@ NPT_SET_LOCAL_LOGGER("ml_upnp.UPnPEngine")
 CWinamp_UPnPEngine::CWinamp_UPnPEngine(winampMediaLibraryPlugin *plugin)
 {
   NPT_LOG_FINEST("CWinamp_UPnPEngine::CWinamp_UPnPEngine");
-  m_WAConfFile  = NULL;
   m_WAVersion   = 0;
   m_isWinampPro = 0;
   m_SplashScreen = 0;
@@ -58,9 +57,6 @@ CWinamp_UPnPEngine::CWinamp_UPnPEngine(winampMediaLibraryPlugin *plugin)
 CWinamp_UPnPEngine::~CWinamp_UPnPEngine(void)
 {
   NPT_LOG_FINEST("CWinamp_UPnPEngine::~CWinamp_UPnPEngine");
-
-  delete m_WAConfFile;
-  m_WAConfFile=NULL;
 }
 
 /*----------------------------------------------------------------------
@@ -126,7 +122,7 @@ NPT_Result
 CWinamp_UPnPEngine::CheckWinampVersion(void)
 {
   HKEY    hkResult;
-  char    resStr[200];
+  WCHAR   resStr[200];
   DWORD   strLen = 200;
 
   NPT_LOG_FINEST("CWinamp_UPnPEngine::CheckWinampVersion");
@@ -135,26 +131,20 @@ CWinamp_UPnPEngine::CheckWinampVersion(void)
 
   m_WAVersion = SendMessage(m_PluginUPNP->hwndWinampParent, WM_WA_IPC, 0, IPC_GETVERSION);
 
-  if(m_WAVersion < 0x5050)
+  if(m_WAVersion < 0x5060)
   {
-#ifdef UNICODE
-    MessageBox(m_PluginUPNP->hwndLibraryParent,L"The ml_upnp plug-in requires Winamp v5.50 and up for it to work.\t\n"
+    MessageBoxW(m_PluginUPNP->hwndLibraryParent,L"The ml_upnp plug-in requires Winamp v5.50 and up for it to work.\t\n"
   								  L"Please upgrade your Winamp client to be able to use this.",
-								  CA2T(m_PluginUPNP->description),MB_OK|MB_ICONINFORMATION);
-#else
-    MessageBox(m_PluginUPNP->hwndLibraryParent,"The ml_upnp plug-in requires Winamp v5.50 and up for it to work.\t\n"
-  								  "Please upgrade your Winamp client to be able to use this.",
-								  m_PluginUPNP->description,MB_OK|MB_ICONINFORMATION);
-#endif
+								  PLUGIN_ABOUT,MB_OK|MB_ICONINFORMATION);
 	return NPT_FAILURE;
   }
 
   /* Version PRO de Winamp */
-  if((RegOpenKeyEx(HKEY_LOCAL_MACHINE,("SOFTWARE\\Nullsoft\\Winamp"),0,KEY_READ,&hkResult)) == ERROR_SUCCESS)
+  if((RegOpenKeyExW(HKEY_LOCAL_MACHINE,(L"SOFTWARE\\Nullsoft\\Winamp"),0,KEY_READ,&hkResult)) == ERROR_SUCCESS)
   {
-    if((RegQueryValueEx(hkResult,("regkey"),NULL,NULL,(unsigned char *)resStr,&strLen)) == ERROR_SUCCESS)
+    if((RegQueryValueEx(hkResult,(L"regkey"),NULL,NULL,(unsigned char *)resStr,&strLen)) == ERROR_SUCCESS)
     {
-      if (strlen(resStr) > 8)
+      if (wcslen(resStr) > 8)
         m_isWinampPro=1;
     }
     RegCloseKey(hkResult);
@@ -169,23 +159,21 @@ CWinamp_UPnPEngine::CheckWinampVersion(void)
 NPT_Result
 CWinamp_UPnPEngine::LoadPreferences(void)
 {
+  LPWSTR  WAConfFile = NULL;
+
   NPT_LOG_FINEST("CWinamp_UPnPEngine::LoadPreferences");
 
-  if (!m_WAConfFile)
-  {
-    NPT_CHECK_POINTER_FATAL(m_PluginUPNP);
-    m_WAConfFile = new NPT_String((char*)SendMessage(m_PluginUPNP->hwndWinampParent, WM_WA_IPC, 0, IPC_GETINIFILE));
-  }
+  NPT_CHECK_POINTER_FATAL(m_PluginUPNP);
+  WAConfFile = (LPWSTR)SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,0,IPC_GETINIFILE);
+  NPT_CHECK_POINTER_FATAL(WAConfFile);
 
-  NPT_CHECK_POINTER_FATAL(m_WAConfFile);
-
-  m_SplashScreen=GetPrivateProfileInt(CONFIG_SECTION, CONFIG_SPLASH, 0, m_WAConfFile->GetChars());
+  m_SplashScreen=GetPrivateProfileIntW(CONFIG_SECTION, CONFIG_SPLASH, 0, WAConfFile);
   if (m_SplashScreen < 0) m_SplashScreen = 0;
 
-  m_RendererActive=GetPrivateProfileInt(CONFIG_SECTION, CONFIG_RENDERER, 0, m_WAConfFile->GetChars());
+  m_RendererActive=GetPrivateProfileIntW(CONFIG_SECTION, CONFIG_RENDERER, 0, WAConfFile);
   if (m_RendererActive < 0) m_RendererActive = 0;
 
-  GetPrivateProfileString(CONFIG_SECTION, CONFIG_FRIENDLYNAME, DEFAUT_FRIENDLYNAME, m_FriendlyName, sizeof(m_FriendlyName), m_WAConfFile->GetChars());
+  GetPrivateProfileStringW(CONFIG_SECTION, CONFIG_FRIENDLYNAME, DEFAUT_FRIENDLYNAME, m_FriendlyName, sizeof(m_FriendlyName), WAConfFile);
 
   NPT_LOG_INFO_3("m_SplashScreen = %ld\nm_RendererActive = %d\nm_FriendlyName = %s\n", 
       m_SplashScreen, m_RendererActive, m_FriendlyName);
@@ -212,19 +200,16 @@ CWinamp_UPnPEngine::SavePreferences(void)
 |   CWinamp_UPnPEngine::SavePreference
 +---------------------------------------------------------------------*/
 NPT_Result
-CWinamp_UPnPEngine::SavePreference(TCHAR *variable, TCHAR *valeur)
+CWinamp_UPnPEngine::SavePreference(LPCWSTR variable, TCHAR *valeur)
 {
+  LPWSTR  WAConfFile = NULL;
+
   NPT_LOG_FINEST("CWinamp_UPnPEngine::SavePreference");
 
-  if (!m_WAConfFile)
-  {
-    NPT_CHECK_POINTER_FATAL(m_PluginUPNP);
-    m_WAConfFile = new NPT_String((char*)SendMessage(m_PluginUPNP->hwndWinampParent, WM_WA_IPC, 0, IPC_GETINIFILE));
-  }
-
-  NPT_CHECK_POINTER_FATAL(m_WAConfFile);
-
-  WritePrivateProfileString(CONFIG_SECTION,variable,valeur,m_WAConfFile->GetChars());
+  NPT_CHECK_POINTER_FATAL(m_PluginUPNP);
+  WAConfFile = (LPWSTR)SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,0,/*IPC_GETINIFILEW*/ 1334);
+  NPT_CHECK_POINTER_FATAL(WAConfFile);
+  WritePrivateProfileString(CONFIG_SECTION, variable, valeur, WAConfFile);
 
   return NPT_SUCCESS;
 }
@@ -233,23 +218,19 @@ CWinamp_UPnPEngine::SavePreference(TCHAR *variable, TCHAR *valeur)
 |   CWinamp_UPnPEngine::SavePreference
 +---------------------------------------------------------------------*/
 NPT_Result
-CWinamp_UPnPEngine::SavePreference(TCHAR *variable, NPT_Int16 valeur)
+CWinamp_UPnPEngine::SavePreference(LPCWSTR variable, DWORD valeur)
 {
-  TCHAR s[32];
+  LPCWSTR  WAConfFile = NULL;
+  WCHAR   s[32] = {0};
 
   NPT_LOG_FINEST("CWinamp_UPnPEngine::SavePreference");
 
-  if (!m_WAConfFile)
-  {
-    NPT_CHECK_POINTER_FATAL(m_PluginUPNP);
-    m_WAConfFile = new NPT_String((char*)SendMessage(m_PluginUPNP->hwndWinampParent, WM_WA_IPC, 0, IPC_GETINIFILE));
-  }
+  NPT_CHECK_POINTER_FATAL(m_PluginUPNP);
+  WAConfFile = (LPWSTR)SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,0,/*IPC_GETINIFILEW*/ 1334);
+  NPT_CHECK_POINTER_FATAL(WAConfFile);
 
-  NPT_CHECK_POINTER_FATAL(m_WAConfFile);
-
-  NPT_SetMemory(s, 0, sizeof(s));
-  sprintf_s(s, sizeof(s), "%d", valeur);
-  WritePrivateProfileString(CONFIG_SECTION,variable,s,m_WAConfFile->GetChars());
+  StringCchPrintfW(s, sizeof(s), L"%d", valeur);
+  WritePrivateProfileStringW(CONFIG_SECTION, variable, s, WAConfFile);
 
   return NPT_SUCCESS;
 }
@@ -267,7 +248,7 @@ CWinamp_UPnPEngine::CreatePreferencePage(void)
   // Page support
   m_prefpageUPnPSupport.hInst = m_PluginUPNP->hDllInstance;
   m_prefpageUPnPSupport.dlgID = IDD_UPNP_CONFIG_SUPPORT;
-  m_prefpageUPnPSupport.name="UPnP Support";
+  m_prefpageUPnPSupport.name=L"UPnP Support";
   m_prefpageUPnPSupport.where=0;
   m_prefpageUPnPSupport.proc=CfgSupportDlgProc;
 
@@ -292,7 +273,7 @@ CWinamp_UPnPEngine::CreatePreferencePage(void)
   //m_prefpageUPnPAbout.where=(intptr_t)&m_prefpageUPnPSupport;
   //m_prefpageUPnPAbout.proc=CfgAboutDlgProc;
 
-  SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,(int)&m_prefpageUPnPSupport,IPC_ADD_PREFS_DLG);
+  SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,(int)&m_prefpageUPnPSupport,IPC_ADD_PREFS_DLGW);
   //SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,(int)&m_prefpageUPnPMediaServer,IPC_ADD_PREFS_DLG);
   //SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,(int)&m_prefpageUPnPMediaRenderer,IPC_ADD_PREFS_DLG);
   //SendMessage(m_PluginUPNP->hwndWinampParent,WM_WA_IPC,(int)&m_prefpageUPnPAbout,IPC_ADD_PREFS_DLG);
@@ -336,13 +317,13 @@ CWinamp_UPnPEngine::Start(void)
   // Ajout du point de controle au moteur PLATINUM UPnP
   m_upnp->AddCtrlPoint(ctrlPoint);
 
-  // Création du Renderer. Il ne sera actif que s'il est attaché au moteur PLATINUM UPnP
-  m_RendererDevice = new CWinamp_MediaRenderer(m_FriendlyName, false);
+  //// Création du Renderer. Il ne sera actif que s'il est attaché au moteur PLATINUM UPnP
+  //m_RendererDevice = new CWinamp_MediaRenderer(m_FriendlyName, false);
 
-  if (m_RendererActive == 1)
-    m_upnp->AddDevice(m_RendererDevice);
-  else
-    m_upnp->RemoveDevice(m_RendererDevice);
+  //if (m_RendererActive == 1)
+  //  m_upnp->AddDevice(m_RendererDevice);
+  //else
+  //  m_upnp->RemoveDevice(m_RendererDevice);
 
   //On démarre le moteur PLATINUM UPnP
   m_upnp->Start();

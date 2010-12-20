@@ -50,8 +50,6 @@ CWinamp_ListView::~CWinamp_ListView(void)
 {
   m_Hwnd = NULL;
   m_Column = 0;
-
-  
 }
 
 /*----------------------------------------------------------------------
@@ -76,12 +74,12 @@ CWinamp_ListView::UnskinWindow(winampMediaLibraryPlugin *plugin)
 |   CWinamp_ListView::InsertColumn
 +---------------------------------------------------------------------*/
 NPT_Result 
-CWinamp_ListView::InsertColumn(NPT_Int32 column, char* text, NPT_Int32 width=0)
+CWinamp_ListView::InsertColumn(NPT_Int32 column, LPWSTR text, NPT_Int32 width=0)
 {
   /* add listview columns */
-  LVCOLUMN lvc = {0, };
+  LVCOLUMNW lvc = {0, };
   lvc.mask = LVCF_TEXT | LVCF_WIDTH;
-  lvc.pszText = TEXT(text);
+  lvc.pszText = text;
   lvc.cx = width;
 
   m_Column++;
@@ -93,12 +91,12 @@ CWinamp_ListView::InsertColumn(NPT_Int32 column, char* text, NPT_Int32 width=0)
 |   CWinamp_ListView::AddColumn
 +---------------------------------------------------------------------*/
 NPT_Result 
-CWinamp_ListView::AddColumn(char* text, NPT_Int32 width=0)
+CWinamp_ListView::AddColumn(LPWSTR text, NPT_Int32 width=0)
 {
   /* add listview columns */
-  LVCOLUMN lvc = {0, };
+  LVCOLUMNW lvc = {0, };
   lvc.mask = LVCF_TEXT | LVCF_WIDTH;
-  lvc.pszText = TEXT(text);
+  lvc.pszText = text;
   lvc.cx = width;
 
   m_Column++;
@@ -110,18 +108,18 @@ CWinamp_ListView::AddColumn(char* text, NPT_Int32 width=0)
 |   CWinamp_ListView::AddItem
 +---------------------------------------------------------------------*/
 void 
-CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
+CWinamp_ListView::AddItem(LPWSTR ObjectId, itemRecordW* item)
 {
-  NPT_Int8      year[4+1];
-  NPT_Int8      track[10+1];
+  TCHAR         length[10+1] = {0};
+  NPT_String    s_length;
 
-  LVITEM lvi = {0};
+  LVITEMW lvi = {0};
   lvi.mask = LVIF_TEXT;
   lvi.iItem = m_Row;
   lvi.iSubItem = LW_OBJECT_ID;
 
   lvi.pszText = ObjectId;
-  lvi.cchTextMax = strlen(ObjectId);
+  lvi.cchTextMax = wcslen(ObjectId);
   lvi.iItem = ListView_InsertItem(m_Hwnd, &lvi);
 
   if (lvi.iItem >= 0) {
@@ -130,12 +128,12 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
     if (item->artist != NULL)
     {
       lvi.pszText = item->artist;
-      lvi.cchTextMax = strlen(item->artist);
+      lvi.cchTextMax = wcslen(item->artist);
     }
     else
     {
       lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
-      StringCchCopy(lvi.pszText, 1, "");
+      StringCchCopyW(lvi.pszText, 1, L"");
       lvi.cchTextMax = 1;
     }
     ListView_SetItem(m_Hwnd, &lvi);
@@ -143,7 +141,7 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
     /* Title */
     lvi.iSubItem = LW_TITLE;
     lvi.pszText = item->title;
-    lvi.cchTextMax = strlen(item->title);
+    lvi.cchTextMax = wcslen(item->title);
     ListView_SetItem(m_Hwnd, &lvi);
 
     /* Album */
@@ -151,12 +149,12 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
     if (item->artist != NULL)
     {
       lvi.pszText = item->album;
-      lvi.cchTextMax = strlen(item->album);
+      lvi.cchTextMax = wcslen(item->album);
     }
     else
     {
       lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
-      StringCchCopy(lvi.pszText, 1, "");
+      StringCchCopyW(lvi.pszText, 1, L"");
       lvi.cchTextMax = 1;
     }
     ListView_SetItem(m_Hwnd, &lvi);
@@ -166,12 +164,12 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
     if (item->genre != NULL)
     {
       lvi.pszText = item->genre;
-      lvi.cchTextMax = strlen(item->genre);
+      lvi.cchTextMax = wcslen(item->genre);
     }
     else
     {
       lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
-      StringCchCopy(lvi.pszText, 1, "");
+      StringCchCopyW(lvi.pszText, 1, L"");
       lvi.cchTextMax = 1;
     }
     ListView_SetItem(m_Hwnd, &lvi);
@@ -180,16 +178,14 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
     lvi.iSubItem = LW_YEAR;
     if (item->year != NPT_DATETIME_YEAR_MIN)
     {
-      NPT_SetMemory(year, 0, sizeof(year));
-      NPT_FormatString(year, sizeof(year), "%ld", item->year);
-      lvi.pszText = (LPTSTR)calloc(sizeof(year), sizeof(LPTSTR));
-      StringCchCopy(lvi.pszText, sizeof(year), year);
-      lvi.cchTextMax = sizeof(year);
+      lvi.pszText = (LPTSTR)calloc(4+1, sizeof(LPTSTR));
+      StringCchPrintfW(lvi.pszText, 4+1, L"%ld", item->year);
+      lvi.cchTextMax = 4+1;
     }
     else
     {
       lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
-      StringCchCopy(lvi.pszText, 1, "");
+      StringCchCopyW(lvi.pszText, 1, L"");
       lvi.cchTextMax = 1;
     }
     ListView_SetItem(m_Hwnd, &lvi);
@@ -198,22 +194,34 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
     lvi.iSubItem = LW_TRACKNO;
     if (item->track != 0)
     {
-      NPT_SetMemory(track, 0, sizeof(track));
-      NPT_FormatString(track, sizeof(track), "%ld", item->track);
-      lvi.pszText = (LPTSTR)calloc(sizeof(track), sizeof(LPTSTR));
-      StringCchCopy(lvi.pszText, sizeof(track), track);
-      lvi.cchTextMax = sizeof(track);
+      lvi.pszText = (LPTSTR)calloc(10+1, sizeof(LPTSTR));
+      StringCchPrintfW(lvi.pszText, 10+1, L"%ld", item->track);
+      lvi.cchTextMax = 10+1;
     }
     else
     {
       lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
-      StringCchCopy(lvi.pszText, 1, "");
+      StringCchCopyW(lvi.pszText, 1, L"");
       lvi.cchTextMax = 1;
     }
     ListView_SetItem(m_Hwnd, &lvi);
 
-    //,
-    //LW_LENGTH,
+    /* length */
+    lvi.iSubItem = LW_LENGTH;
+    if (item->length != 0)
+    {
+      FormatTimeStamp(s_length, item->length);
+      lvi.pszText = (LPTSTR)calloc(10+1, sizeof(LPTSTR));
+      StringCchPrintfW(lvi.pszText, 10+1, L"%s", CA2T(s_length.GetChars()));
+      lvi.cchTextMax = 10+1;
+    }
+    else
+    {
+      lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
+      StringCchCopyW(lvi.pszText, 1, L"");
+      lvi.cchTextMax = 1;
+    }
+    ListView_SetItem(m_Hwnd, &lvi);
 
     ///* FileName */
     //lvi.iSubItem = LW_FILENAME;
@@ -225,7 +233,7 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
     //else
     //{
     //  lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
-    //  StringCchCopy(lvi.pszText, 1, "");
+    //  StringCchCopyW(lvi.pszText, 1, "");
     //  lvi.cchTextMax = 1;
     //}
     //ListView_SetItem(m_Hwnd, &lvi);
@@ -241,13 +249,13 @@ CWinamp_ListView::AddItem(char* ObjectId, itemRecord* item)
   ////    NPT_String duration;
   ////    FormatTimeStamp(duration, item->m_Resources[0].m_Duration);
   ////    lvi.pszText = (LPTSTR)calloc(duration.GetLength()+1, sizeof(LPTSTR));
-  ////    StringCchCopy(lvi.pszText, duration.GetLength()+1, CA2T(duration.GetChars()));
+  ////    StringCchCopyW(lvi.pszText, duration.GetLength()+1, CA2T(duration.GetChars()));
   ////    lvi.cchTextMax = duration.GetLength()+1;
   ////  }
   ////  else
   ////  {
   ////    lvi.pszText = (LPTSTR)calloc(1, sizeof(LPTSTR));
-  ////    StringCchCopy(lvi.pszText, 1, "");
+  ////    StringCchCopyW(lvi.pszText, 1, "");
   ////    lvi.cchTextMax = 1;
   ////  }
   ////  ListView_SetItem(m_Hwnd, &lvi);
@@ -297,7 +305,7 @@ CWinamp_ListView::Sort(winampMediaLibraryPlugin* plugin)
 NPT_Result
 CWinamp_ListView::Sort(LPARAM lParam)
 {
-  HDITEM hdi;
+  HDITEMW hdi;
   LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
   HWND HwndLVHeader = (HWND) ListView_GetHeader(m_Hwnd);
             
@@ -356,66 +364,62 @@ CWinamp_ListView::GetItemText(NPT_Int32 value)
 
   ListView_GetItemText(m_Hwnd, value, 0, szBuf1, sizeof(szBuf1));
   IdObject.Erase(0, IdObject.GetLength());
-  IdObject.Append(szBuf1);
+  IdObject.Append(CW2A(szBuf1));
 
   return IdObject;
 }
 
-
-/*----------------------------------------------------------------------
-|   CWinamp_ListView::Search
-+---------------------------------------------------------------------*/
-NPT_Result  
-CWinamp_ListView::Search(TCHAR* text, Winamp_MediaObjectsMap MediaObjects)
-{
-  NPT_String s_artist;
-
-  NPT_List<Winamp_MediaObjectsMapEntry*> entries = MediaObjects.GetEntries();
-  if (entries.GetItemCount() != 0) 
-  {
-    ClearAll();
-    NPT_List<Winamp_MediaObjectsMapEntry*>::Iterator entry = entries.GetFirstItem();
-    while (entry) 
-    {
-      PLT_MediaObject MediaObject = (*entry)->GetValue();
-      
-      if (MediaObject.m_People.artists.GetItemCount() > 0)
-      {
-        NPT_List<PLT_PersonRole>::Iterator artist = MediaObject.m_People.artists.GetFirstItem();
-        s_artist = artist->name;
-      }
-
-      if ((strcmp(text, "") == 0) || (s_artist.Find(text,0,true) != -1) 
-          || (MediaObject.m_Affiliation.album.Find(text,0,true) != -1) || (MediaObject.m_Title.Find(text,0,true) != -1))
-      {
-        NPT_String s((NPT_String)(*entry)->GetKey());
-        //AddItem(&MediaObject);
-      }
-      ++entry;
-    }
-  }
-
-  if (m_SubItem != -1)
-    return (NPT_Result) ListView_SortItemsEx(m_Hwnd, CompareStringProc, (LPARAM)this);
-
-  return NPT_SUCCESS;
-}
+///*----------------------------------------------------------------------
+//|   CWinamp_ListView::Search
+//+---------------------------------------------------------------------*/
+//NPT_Result  
+//CWinamp_ListView::Search(TCHAR* text, Winamp_MediaObjectsMap MediaObjects)
+//{
+//  NPT_String s_artist;
+//
+//  NPT_List<Winamp_MediaObjectsMapEntry*> entries = MediaObjects.GetEntries();
+//  if (entries.GetItemCount() != 0) 
+//  {
+//    ClearAll();
+//    NPT_List<Winamp_MediaObjectsMapEntry*>::Iterator entry = entries.GetFirstItem();
+//    while (entry) 
+//    {
+//      PLT_MediaObject MediaObject = (*entry)->GetValue();
+//      
+//      if (MediaObject.m_People.artists.GetItemCount() > 0)
+//      {
+//        NPT_List<PLT_PersonRole>::Iterator artist = MediaObject.m_People.artists.GetFirstItem();
+//        s_artist = artist->name;
+//      }
+//
+//      if ((strcmp(text, "") == 0) || (s_artist.Find(text,0,true) != -1) 
+//          || (MediaObject.m_Affiliation.album.Find(text,0,true) != -1) || (MediaObject.m_Title.Find(text,0,true) != -1))
+//      {
+//        NPT_String s((NPT_String)(*entry)->GetKey());
+//        //AddItem(&MediaObject);
+//      }
+//      ++entry;
+//    }
+//  }
+//
+//  if (m_SubItem != -1)
+//    return (NPT_Result) ListView_SortItemsEx(m_Hwnd, CompareStringProc, (LPARAM)this);
+//
+//  return NPT_SUCCESS;
+//}
 
 /*----------------------------------------------------------------------
 |   CWinamp_ListView::SavePreference
 +---------------------------------------------------------------------*/
-NPT_Result CWinamp_ListView::SavePreference(TCHAR* section, TCHAR* filename)
+NPT_Result CWinamp_ListView::SavePreference(LPWSTR section, LPWSTR filename)
 {
-  TCHAR s[32];
+  TCHAR s[32] = {0};
   if (filename != NULL)
   {
-    NPT_SetMemory(s, 0, sizeof(s));
-    sprintf_s(s, sizeof(s), "%d", m_SortDirection);
-    WritePrivateProfileString(section,CONFIG_SORT_DIR,s,filename);
-
-    NPT_SetMemory(s, 0, sizeof(s));
-    sprintf_s(s, sizeof(s), "%d", m_SortColumn);
-    WritePrivateProfileString(section,CONFIG_SORT_COL,s,filename);
+    StringCchPrintfW(s, sizeof(s), L"%d", m_SortDirection);
+    WritePrivateProfileStringW(section, CONFIG_SORT_DIR, s, filename);
+    StringCchPrintfW(s, sizeof(s), L"%d", m_SortColumn);
+    WritePrivateProfileStringW(section, CONFIG_SORT_COL, s, filename);
     return NPT_SUCCESS;
   }
   return NPT_FAILURE;
@@ -424,7 +428,7 @@ NPT_Result CWinamp_ListView::SavePreference(TCHAR* section, TCHAR* filename)
 /*----------------------------------------------------------------------
 |   CWinamp_ListView::LoadPreference
 +---------------------------------------------------------------------*/
-NPT_Result CWinamp_ListView::LoadPreference(TCHAR* section, TCHAR* filename)
+NPT_Result CWinamp_ListView::LoadPreference(LPWSTR section, LPWSTR filename)
 {
   if (filename != NULL)
   {

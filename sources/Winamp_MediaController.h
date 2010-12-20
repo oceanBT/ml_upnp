@@ -134,7 +134,7 @@ private:
   /**
    Fonction de création de la liste d'éléments à jouer
   */
-  void        GetItemRecordList(itemRecordList *list);
+  void        GetItemRecordList(itemRecordListW *list);
 
   /**
     Fonction pour jouer un morceau
@@ -186,7 +186,7 @@ private:
   winampMediaLibraryPlugin            *m_PluginUPNP;
 
   // Nom du fichier ini de Winamp
-  NPT_String                          m_WAConfFile;
+  LPWSTR                              m_WAConfFile;
 
   // Nom du fichier de Configuration de ml_upnp
   TCHAR                               m_MLFile[128];

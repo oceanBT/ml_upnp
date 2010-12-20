@@ -42,14 +42,15 @@
 +---------------------------------------------------------------------*/
 #undef ASSERT
 #include <nde/nde.h>
+#include <nde/nde_c.h>
 #include "winamp_listview.h"
 
 /*----------------------------------------------------------------------
 |   Define
 +---------------------------------------------------------------------*/
-#define CONFIG_DATABASE     "upnp_DataBase"
-#define WINAMP_DB_DEVICE    "device"
-#define WINAMP_DB_ITEM      "main"
+#define CONFIG_DATABASE     L"upnp_DataBase"
+#define WINAMP_DB_DEVICE    L"device"
+#define WINAMP_DB_ITEM      L"main"
 
 /*----------------------------------------------------------------------
 |   Enumeration
@@ -142,12 +143,12 @@ public:
   /** 
     Chargement de la listView
   */
-  NPT_Int32   LoadData(CWinamp_ListView* lv, NPT_String uuid_ref);  // OK
+  NPT_Int32   LoadData(CWinamp_ListView* lv, NPT_String uuid_ref, LPCWSTR filter = NULL);  // OK
 
   /**
     Chargement de la liste des éléments à lire
   */
-  NPT_Int32   SelectItem(NPT_String Object_id_ref, itemRecord* item); //OK
+  NPT_Int32   SelectItem(NPT_String Object_id_ref, itemRecordW* item); //OK
 
   /**
     Synchronisation de la bas de données
@@ -158,44 +159,44 @@ private:
   /**
     Ajoute d'une valeur dans un champ
   */
-  NPT_Result  SetValue(NPT_Int32 nom_table, Scanner * scanner, NPT_Int32 id, NPT_Int32 value); //OK
-  NPT_Result  SetValue(NPT_Int32 nom_table, Scanner * scanner, NPT_Int32 id, const NPT_Int8* value); //OK
+  NPT_Result  SetValue(NPT_Int32 nom_table, nde_scanner_t scanner, NPT_Int32 id, NPT_Int32 value); //OK
+  NPT_Result  SetValue(NPT_Int32 nom_table, nde_scanner_t scanner, NPT_Int32 id, const LPCWSTR value); //OK
 
   /** 
     Recherche de la ligne concernée pour l'appareil indiqué
   */
-  Scanner*   GetScannerForDevice(NPT_String uuid_ref); //OK
+  nde_scanner_t   GetScannerForDevice(NPT_String uuid_ref); //OK
 
   /** 
     Recherche de la ligne concernée pour l'item indiqué
   */
-  Scanner*   GetScannerForItem(NPT_String Object_id); //OK
+  nde_scanner_t   GetScannerForItem(NPT_String Object_id); //OK
 
 private:
 
   // Adresse du plugin
-  winampMediaLibraryPlugin            *m_PluginUPNP;
+  winampMediaLibraryPlugin          *m_PluginUPNP;
 
   // Base de données
-  Database                            *m_DB;
+  nde_database_t                    m_DB;
 
   // Table des serveurs media 
-  Table                               *m_MSTable;
+  nde_table_t                       m_MSTable;
 
   // Nom de la table des serveurs media
-  NPT_String                          m_MSTableName;
+  TCHAR                             m_MSTableName[256];
 
   // Nom de l'index de la table des serveurs media
-  NPT_String                          m_MSTableIndexName;
+  TCHAR                             m_MSTableIndexName[256];
 
-  // Table des chansons
-  Table                               *m_ItemTable;
+  // Table des elements
+  nde_table_t                       m_ItemTable;
 
-  // Nom de la table des chansons
-  NPT_String                          m_ItemTableName;
+  // Nom de la table des elements
+  TCHAR                             m_ItemTableName[256];
 
-  // Nom de l'index de la table des chansons
-  NPT_String                          m_ItemTableIndexName;
+  // Nom de l'index de la table des elements
+  TCHAR                             m_ItemTableIndexName[256];
 };
 
 #endif /* _WINAMP_DATABASE_H_ */

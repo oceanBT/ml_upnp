@@ -102,14 +102,14 @@ public:
     @param variable à enregistrer
     @param valeur de la variable (Chaine de caractère)
   */
-  NPT_Result    SavePreference(TCHAR *variable, TCHAR *valeur);
+  NPT_Result    SavePreference(LPCWSTR variable, TCHAR *valeur);
 
   /**
     Enregistre une préférence du plugin dans Winamp
     @param variable à enregistrer
     @param valeur de la variable (Entier)
   */
-  NPT_Result    SavePreference(TCHAR *variable, NPT_Int16 valeur);
+  NPT_Result    SavePreference(LPCWSTR variable, DWORD valeur);
 
   /**
     Creation de la boite de dialogue des préferences
@@ -179,14 +179,11 @@ private:
   // Adresse du plugin
   winampMediaLibraryPlugin  *m_PluginUPNP;
 
-  //Fichier ini de Winamp
-  NPT_String                *m_WAConfFile;
-
   //Version de Winamp
-  NPT_Int32                 m_WAVersion;
+  DWORD                     m_WAVersion;
 
   //Indice d'enregistrement de la version de Winamp
-  NPT_Int32                 m_isWinampPro;
+  DWORD                     m_isWinampPro;
 
   //Controleur A/V Winamp UPnP 
   CWinamp_MediaController   *m_controller;
@@ -198,7 +195,7 @@ private:
   /* Renderer                                            */
   /*******************************************************/
   PLT_DeviceHostReference   m_RendererDevice; //Renderer A/V Winamp UPnP 
-  NPT_Int32                 m_RendererActive; //Indice d'enregistrement de la version de Winamp
+  BOOL                      m_RendererActive; //Indice d'enregistrement de la version de Winamp
   TCHAR                     m_FriendlyName[32];   // Nom du Renderer
   /*******************************************************/
 
@@ -206,16 +203,16 @@ private:
   PLT_UPnP                  *m_upnp;
 
   // Pages des préférences
-  prefsDlgRec               m_prefpageUPnPSupport;
-  prefsDlgRec               m_prefpageUPnPMediaServer;
-  prefsDlgRec               m_prefpageUPnPMediaRenderer;
-  prefsDlgRec               m_prefpageUPnPAbout;
+  prefsDlgRecW              m_prefpageUPnPSupport;
+  prefsDlgRecW              m_prefpageUPnPMediaServer;
+  prefsDlgRecW              m_prefpageUPnPMediaRenderer;
+  prefsDlgRecW              m_prefpageUPnPAbout;
 
   // Valeurs des préférences
-  NPT_Int16                 m_UpdateCheck;      /* Indice de controle de MAJ du plugin */
-  NPT_Int16                 m_SplashScreen;     /* Indice pour l'affichage du SplashScreen */
-  NPT_Int16                 m_MediaServer;      /* Indice pour activer ou non le Server A/V */
-  NPT_Int16                 m_MediaRenderer;    /* Indice pour activer ou non le Renderer A/V */
+  DWORD                     m_UpdateCheck;      /* Indice de controle de MAJ du plugin */
+  DWORD                     m_SplashScreen;     /* Indice pour l'affichage du SplashScreen */
+  DWORD                     m_MediaServer;      /* Indice pour activer ou non le Server A/V */
+  DWORD                     m_MediaRenderer;    /* Indice pour activer ou non le Renderer A/V */
 };
 
 #endif // _WINAMP_UPNP_ENGINE_H_

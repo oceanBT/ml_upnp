@@ -40,13 +40,20 @@ NPT_SET_LOCAL_LOGGER("ml_upnp.dllmain")
 return non-zero to abort loading your plugin */
 int Init()
 {
-  AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 #ifdef DEBUG
   // setup Neptune logging
   NPT_LogManager::GetDefault().Configure("plist:.level=INFO;.handlers=FileHandler;.FileHandler.filename=ml_upnp.log");
 #else
-  NPT_LogManager::GetDefault().Configure("plist:.level=OFF;.handlers=NullHandler");
+  if (MessageBoxW(PluginUPNP.hwndLibraryParent,L"DEBUG VERSION : Would you active log?",
+								  PLUGIN_DESCRIPTION,MB_YESNO|MB_ICONQUESTION) == IDYES)
+  {
+    NPT_LogManager::GetDefault().Configure("plist:.level=INFO;.handlers=FileHandler;.FileHandler.filename=ml_upnp.log");
+  }
+  else
+  {
+    NPT_LogManager::GetDefault().Configure("plist:.level=OFF;.handlers=NullHandler");
+  }
 #endif
 
   NPT_LOG_FINEST("Init");
@@ -58,12 +65,16 @@ int Init()
   // Controle de la version de Winamp.
   if (NPT_SUCCEEDED(m_UPnPEngine->CheckWinampVersion()))
   {
-
     // LOG des versions.
     m_UPnPEngine->GetVersion();
 
     // Chargement des préférences.
-    m_UPnPEngine->LoadPreferences();
+    if (m_UPnPEngine->LoadPreferences() == NPT_FAILURE)
+    {
+      MessageBoxW(PluginUPNP.hwndLibraryParent,L"DEBUG VERSION : Unable to load Preference.",
+								  PLUGIN_DESCRIPTION,MB_OK|MB_ICONINFORMATION);
+      return NPT_FAILURE;
+    }
 
     // Creation de l'écran des préférences.
     m_UPnPEngine->CreatePreferencePage();
@@ -80,6 +91,11 @@ int Init()
     else
     {
       NPT_LOG_INFO("ml_upnp plugin can't be started.");
+#ifdef DEBUG
+      MessageBoxW(PluginUPNP.hwndLibraryParent,L"DEBUG VERSION : ml_upnp plugin can't be started.\t\n"
+                                  L"Send the ml_upnp.log(in Winamp Directory) at c.lallier@gmail.com",
+								  PLUGIN_DESCRIPTION,MB_OK|MB_ICONINFORMATION);
+#endif
       return NPT_FAILURE;
     }
   }
@@ -89,8 +105,6 @@ int Init()
 
 void Quit()
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-
     NPT_LOG_FINEST("Quit");
     NPT_LOG_INFO("ml_upnp plugin: stopping...");
 
@@ -105,7 +119,6 @@ void Quit()
 
 INT_PTR MessageProc(int message_type, INT_PTR param1, INT_PTR param2, INT_PTR param3)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
     NPT_LOG_FINEST("MessageProc");
 
     NPT_CHECK_POINTER_FATAL(m_UPnPEngine);
@@ -115,7 +128,7 @@ INT_PTR MessageProc(int message_type, INT_PTR param1, INT_PTR param2, INT_PTR pa
 winampMediaLibraryPlugin PluginUPNP =
 {
 	MLHDR_VER,
-	PLUGIN_NAME " " PLUGIN_VERSION,
+	CW2A(PLUGIN_DESCRIPTION),
 	Init,
 	Quit,
 	MessageProc,

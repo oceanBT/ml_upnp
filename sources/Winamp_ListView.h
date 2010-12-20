@@ -33,8 +33,8 @@
 #include "Platinum.h"
 #include "gen_ml/ml.h"
 
-#define CONFIG_SORT_DIR  "upnp_SortDir"
-#define CONFIG_SORT_COL  "upnp_SortCol"
+#define CONFIG_SORT_DIR  L"upnp_SortDir"
+#define CONFIG_SORT_COL  L"upnp_SortCol"
 
 enum {
   LW_OBJECT_ID,
@@ -44,16 +44,13 @@ enum {
   LW_GENRE,
   LW_YEAR,
   LW_TRACKNO,
-  /*LW_LENGTH,*/
+  LW_LENGTH,
   /*LW_FILENAME,*/
   /*LW_LASTPLAY,*/
   /*LW_RATING,*/
   /*LW_PLAYCOUNT,*/
   LW_MAXNUM
 };
-
-typedef NPT_Map<NPT_String, PLT_MediaObject>          Winamp_MediaObjectsMap;
-typedef NPT_Map<NPT_String, PLT_MediaObject>::Entry   Winamp_MediaObjectsMapEntry;
 
 /*----------------------------------------------------------------------
 |   CWinamp_ListView
@@ -74,13 +71,13 @@ public:
   NPT_Int32   GetSortDirection() { return m_SortDirection; }  // OK
   NPT_Int32   GetSortColumn() { return m_SortColumn; }  // OK
 
-  NPT_Result  AddColumn(char* text, NPT_Int32 width);  // OK
-  NPT_Result  InsertColumn(NPT_Int32 column, char* text, NPT_Int32 width);  // OK
+  NPT_Result  AddColumn(LPWSTR text, NPT_Int32 width);  // OK
+  NPT_Result  InsertColumn(NPT_Int32 column, LPWSTR text, NPT_Int32 width);  // OK
 
   void        SelectAll();  // OK
 
   NPT_Result  ClearAll() { m_Row = 0; return (NPT_Result) ListView_DeleteAllItems(m_Hwnd);}  // OK
-  void        AddItem(char* ObjectId, itemRecord* item);  // OK
+  void        AddItem(LPWSTR ObjectId, itemRecordW* item);  // OK
 
   NPT_Int32   CountItem()  { return m_Row; }  // OK
   NPT_Int32   CountSelectedItem()  { return ListView_GetSelectedCount(m_Hwnd); }  // OK
@@ -90,12 +87,11 @@ public:
   NPT_Result  Sort(LPARAM lParam);  // OK
   NPT_Result  Sort(winampMediaLibraryPlugin *plugin);
   NPT_Result  Sort() { return (NPT_Result) ListView_SortItemsEx(m_Hwnd, CompareStringProc, (LPARAM)this); } // OK
-  NPT_Result  Search(TCHAR* text, Winamp_MediaObjectsMap MediaObjects);
 
   NPT_Int32   GetColumnWidth(NPT_Int32 column) { return ListView_GetColumnWidth(m_Hwnd, column); }  //OK
 
-  NPT_Result  SavePreference(TCHAR* section, TCHAR* filename);
-  NPT_Result  LoadPreference(TCHAR* section, TCHAR* filename);
+  NPT_Result  SavePreference(LPWSTR section, LPWSTR filename);
+  NPT_Result  LoadPreference(LPWSTR section, LPWSTR filename);
 
 private:
   static int CALLBACK CompareStringProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort); 
